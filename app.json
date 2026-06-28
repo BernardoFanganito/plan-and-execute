@@ -1,0 +1,30 @@
+{
+  "expo": {
+    "name": "pande-plan-and-execute",
+    "slug": "snack-2a1dfa31-9d52-4b30-80bd-1d65d4d2b5ac",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "description": "Método P&E (Plan & Execute): Você usa as iniciais de Patrick e Eutanásia, mas dá o significado técnico de \"Planejar e Executar\". Um segredo só seu."
+  }
+}
