@@ -66,6 +66,7 @@ export default function Lembretes({
     value={dataHora || new Date()}
     mode="datetime"
     display="default"
+    themeVariant="dark"
     onChange={(event, dataSelecionada) => {
       setMostrarPicker(false);
       if (dataSelecionada) {
@@ -261,7 +262,7 @@ list: {
     fontSize: 13,
     marginBottom: 16,
   },
-  
+
   doneText: {
     color: "#777789",
     textDecorationLine: "line-through",
