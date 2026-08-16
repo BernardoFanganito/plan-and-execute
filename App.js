@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import { salvarDados, carregarDados } from "./services/storage";
+import { pedirPermissaoNotificacao, agendarNotificacaoLembrete, cancelarNotificacaoLembrete } from "./services/notifications";
 import Home from "./screens/Home";
 import Treinos from "./screens/Treinos";
 import DetalheTreino from "./screens/DetalheTreino";
@@ -35,6 +36,10 @@ export default function App() {
   carregarAfazeres();
 }, []);
 
+
+useEffect(() => {
+  pedirPermissaoNotificacao();
+}, []);
 
 useEffect(() => {
   salvarDados("afazeres", afazeres);
@@ -240,19 +245,28 @@ function excluirRegistroTreino(id) {
     );
   }
 
-  function excluirLembrete(id) {
-    setLembretes(lembretes.filter(item => item.id !== id));
+  async function excluirLembrete(id) {
+  const lembrete = lembretes.find(item => item.id === id);
+  await cancelarNotificacaoLembrete(lembrete?.notificationId);
+
+  setLembretes(lembretes.filter(item => item.id !== id));
+}
+
+  async function adicionarLembrete(texto, dataHora) {
+  let notificationId = null;
+
+  if (dataHora) {
+    notificationId = await agendarNotificacaoLembrete(texto, dataHora);
   }
 
-  function adicionarLembrete(texto) {
-
-    
   setLembretes([
     ...lembretes,
     {
       id: Date.now(),
       titulo: texto,
       concluido: false,
+      dataHora: dataHora || null,
+      notificationId,
     },
   ]);
 }
@@ -268,11 +282,20 @@ function concluirAfazer(id) {
 }
 
 
-function editarLembrete(id, novoTitulo) {
+async function editarLembrete(id, novoTitulo, novaDataHora) {
+  const lembreteAtual = lembretes.find(item => item.id === id);
+
+  await cancelarNotificacaoLembrete(lembreteAtual?.notificationId);
+
+  let notificationId = null;
+  if (novaDataHora) {
+    notificationId = await agendarNotificacaoLembrete(novoTitulo, novaDataHora);
+  }
+
   setLembretes(
     lembretes.map(item =>
       item.id === id
-        ? { ...item, titulo: novoTitulo }
+        ? { ...item, titulo: novoTitulo, dataHora: novaDataHora || null, notificationId }
         : item
     )
   );

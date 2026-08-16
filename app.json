@@ -25,6 +25,9 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "description": "Método P&E (Plan & Execute): Você usa as iniciais de Patrick e Eutanásia, mas dá o significado técnico de \"Planejar e Executar\". Um segredo só seu."
+    "description": "Método P&E (Plan & Execute): Você usa as iniciais de Patrick e Eutanásia, mas dá o significado técnico de \"Planejar e Executar\". Um segredo só seu.",
+    "plugins": [
+      "@react-native-community/datetimepicker"
+    ]
   }
 }

@@ -8,6 +8,8 @@ import {
   TextInput,
 } from "react-native";
 
+import DateTimePicker from "@react-native-community/datetimepicker";
+
 export default function Lembretes({
   navegar,
   lembretes,
@@ -20,6 +22,10 @@ export default function Lembretes({
   const [novoLembrete, setNovoLembrete] = useState("");
 
   const [lembreteEditando, setLembreteEditando] = useState(null);
+
+  const [dataHora, setDataHora] = useState(null);
+
+  const [mostrarPicker, setMostrarPicker] = useState(false);
 
   return (
     <View style={styles.container}>
@@ -38,19 +44,51 @@ export default function Lembretes({
   onChangeText={setNovoLembrete}
 />
 
-      <TouchableOpacity
+   <TouchableOpacity
+  style={styles.dateButton}
+  onPress={() => setMostrarPicker(true)}
+>
+  <Text style={styles.dateButtonText}>
+    {dataHora
+      ? `🕐 ${dataHora.toLocaleString("pt-BR")}`
+      : "🕐 Definir horário (opcional)"}
+  </Text>
+</TouchableOpacity>
+
+{dataHora && (
+  <TouchableOpacity onPress={() => setDataHora(null)}>
+    <Text style={styles.clearDateText}>Remover horário</Text>
+  </TouchableOpacity>
+)}
+
+{mostrarPicker && (
+  <DateTimePicker
+    value={dataHora || new Date()}
+    mode="datetime"
+    display="default"
+    onChange={(event, dataSelecionada) => {
+      setMostrarPicker(false);
+      if (dataSelecionada) {
+        setDataHora(dataSelecionada);
+      }
+    }}
+  />
+)}
+
+            <TouchableOpacity
   style={styles.addButton}
   onPress={() => {
   if (novoLembrete.trim() === "") return;
 
   if (lembreteEditando) {
-    editarLembrete(lembreteEditando, novoLembrete);
+    editarLembrete(lembreteEditando, novoLembrete, dataHora);
     setLembreteEditando(null);
   } else {
-    adicionarLembrete(novoLembrete);
+    adicionarLembrete(novoLembrete, dataHora);
   }
 
   setNovoLembrete("");
+  setDataHora(null);
 }}
 >
         <Text style={styles.addButtonText}>
@@ -66,6 +104,7 @@ export default function Lembretes({
     onPress={() => {
       setNovoLembrete("");
       setLembreteEditando(null);
+      setDataHora(null);
     }}
   >
     <Text style={styles.cancelButtonText}>
@@ -82,14 +121,22 @@ export default function Lembretes({
               <Text style={styles.checkbox}>{item.concluido ? "✅" : "⭕"}</Text>
             </TouchableOpacity>
 
-            <Text style={[styles.reminderText, item.concluido && styles.doneText]}>
-              {item.titulo}
-            </Text>
+                        <View style={{ flex: 1 }}>
+              <Text style={[styles.reminderText, item.concluido && styles.doneText]}>
+                {item.titulo}
+              </Text>
+              {item.dataHora && (
+                <Text style={styles.reminderTime}>
+                  🔔 {new Date(item.dataHora).toLocaleString("pt-BR")}
+                </Text>
+              )}
+            </View>
 
    <TouchableOpacity
   onPress={() => {
     setNovoLembrete(item.titulo);
     setLembreteEditando(item.id);
+    setDataHora(item.dataHora ? new Date(item.dataHora) : null);
   }}
 >
   <Text style={styles.actionButton}>✏️</Text>
@@ -184,12 +231,37 @@ list: {
     fontSize: 24,
     marginRight: 16,
   },
-  reminderText: {
+    reminderText: {
     color: "#FFFFFF",
     fontSize: 17,
     fontWeight: "600",
-    flex: 1,
   },
+  reminderTime: {
+    color: "#8B5CF6",
+    fontSize: 12,
+    marginTop: 4,
+  },
+
+    dateButton: {
+    backgroundColor: "#15151C",
+    padding: 14,
+    borderRadius: 16,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: "#262636",
+  },
+  dateButtonText: {
+    color: "#B8B8C7",
+    textAlign: "center",
+    fontSize: 14,
+  },
+  clearDateText: {
+    color: "#FCA5A5",
+    textAlign: "center",
+    fontSize: 13,
+    marginBottom: 16,
+  },
+  
   doneText: {
     color: "#777789",
     textDecorationLine: "line-through",
