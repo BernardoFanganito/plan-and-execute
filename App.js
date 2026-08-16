@@ -84,6 +84,15 @@ useEffect(() => {
 
 useEffect(() => {
   async function carregarExerciciosFeitos() {
+    const hoje = new Date().toLocaleDateString("pt-BR");
+    const dataSalva = await carregarDados("dataExerciciosFeitos", null);
+
+    if (dataSalva !== hoje) {
+      setExerciciosFeitos({});
+      await salvarDados("dataExerciciosFeitos", hoje);
+      return;
+    }
+
     const dados = await carregarDados("exerciciosFeitos", {});
     setExerciciosFeitos(dados);
   }
